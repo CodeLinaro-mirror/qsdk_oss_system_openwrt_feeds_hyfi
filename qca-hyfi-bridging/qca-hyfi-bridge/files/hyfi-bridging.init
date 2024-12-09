@@ -104,16 +104,6 @@ start() {
                 hyctl setfwmode $brprefix$ieee1905managed_bridge SINGLE
             fi
 
-            if [ -n "$ieee1905managed_bridge2" ];then
-                if ! hyctl attach $brprefix$ieee1905managed_bridge2; then
-                    stop
-                    return 1
-                fi
-                if [ "$fwmode" = "SINGLE" ]; then
-                    echo "Setting fwmode SINGLE for $brprefix$ieee1905managed_bridge2" > /dev/console
-                    hyctl setfwmode $brprefix$ieee1905managed_bridge2 SINGLE
-                fi
-            fi
 	else
 	    local status
 	    config_load network
@@ -132,8 +122,7 @@ start() {
 				config_get fwmode 'hy' 'ForwardingMode' 'SINGLE'
 
 				if ! hyctl attach $brprefix$br_name; then
-					stop
-					return 1
+					echo "$brprefix$br_name attach failed" > /dev/console
 				fi
 
 				if [ "$fwmode" = "SINGLE" ]; then
