@@ -4,15 +4,12 @@ include $(INCLUDE_DIR)/kernel.mk
 PKG_NAME:=qca-hyfi-qdisc
 PKG_RELEASE:=1
 PKG_LICENSE:=GPLv2
+PKG_VERSION:=1
 
 ifeq ($(CONFIG_TARGET_sdx75_cpe),y)
 -include $(TOPDIR)/owrt-qti-ipq-prop/include/local-development.mk
 else
 -include $(INCLUDE_DIR)/local-development.mk
-endif
-
-ifeq ($(DUMP)$(PKG_VERSION),)
-  PKG_VERSION:=$(shell git ls-remote $(PKG_SOURCE_URL) $(PKG_BRANCH) | cut -b -7)
 endif
 
 QCAHYFI_QDISC_MAKE_OPTS:= \
