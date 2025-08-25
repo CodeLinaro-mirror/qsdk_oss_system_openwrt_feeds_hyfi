@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 PKG_LICENSE:=GPLv2
 PKG_VERSION:=1
 
-ifeq ($(CONFIG_TARGET_sdx75_cpe),y)
+ifeq ($(CONFIG_TARGET_sdx75_cpe)$(CONFIG_TARGET_sdx85_cpe),y)
 -include $(TOPDIR)/owrt-qti-ipq-prop/include/local-development.mk
 else
 -include $(INCLUDE_DIR)/local-development.mk

@@ -6,18 +6,18 @@ PKG_RELEASE:=1
 PKG_LICENSE:=ISC & GPLv2
 PKG_VERSION:=1
 
-ifeq ($(CONFIG_TARGET_sdx75_cpe),y)
+ifeq ($(CONFIG_TARGET_sdx75_cpe)$(CONFIG_TARGET_sdx85_cpe),y)
 -include $(TOPDIR)/owrt-qti-ipq-prop/include/local-development.mk
 else
 -include $(INCLUDE_DIR)/local-development.mk
 endif
 
-ifneq ($(CONFIG_TARGET_sdx75_cpe),y)
+ifneq ($(CONFIG_TARGET_sdx75_cpe)$(CONFIG_TARGET_sdx85_cpe),y)
   PKG_BUILD_DEPENDS+=+qca-ssdk
 endif
 include $(INCLUDE_DIR)/package.mk
 
-ifeq ($(CONFIG_TARGET_sdx75_cpe),y)
+ifeq ($(CONFIG_TARGET_sdx75_cpe)$(CONFIG_TARGET_sdx85_cpe),y)
 ifeq ($(TARGET_VARIANT),perf)
   COMPILE_MODE :=perf
 else
@@ -44,7 +44,7 @@ ifeq ($(CONFIG_HYFI_DISABLE_SSDK_SUPPORT),y)
     QCAHYFI_BRIDGE_MAKE_OPTS+= DISABLE_SSDK_SUPPORT=1
 endif
 
-ifeq ($(CONFIG_TARGET_sdx75_cpe),y)
+ifeq ($(CONFIG_TARGET_sdx75_cpe)$(CONFIG_TARGET_sdx85_cpe),y)
     QCAHYFI_BRIDGE_MAKE_OPTS+= DISABLE_SSDK_SUPPORT=1
     QCAHYFI_BRIDGE_MAKE_OPTS += CONFIG_DISABLE_APS_HOOKS=y
 endif
@@ -69,7 +69,7 @@ define KernelPackage/qca-hyfi-bridge
     CONFIG_NETFILTER=y \
     CONFIG_BRIDGE_NETFILTER=y
   DEPENDS:=+PACKAGE_kmod-emesh-sp:kmod-emesh-sp
-ifneq ($(CONFIG_TARGET_sdx75_cpe),y)
+ifneq ($(CONFIG_TARGET_sdx75_cpe)$(CONFIG_TARGET_sdx85_cpe),y)
   DEPENDS+=+kmod-qca-ssdk-nohnat
 endif
   FILES:= $(strip $(QCAHYBRID_MODULE_LIST))
@@ -104,7 +104,9 @@ endif
 
 define Build/Compile
 
-ifeq ($(CONFIG_TARGET_sdx75_cpe),y)
+ifeq ($(CONFIG_TARGET_sdx75_cpe)$(CONFIG_TARGET_sdx85_cpe),y)
+	$(CP) $(TOPDIR)/src/kernel-$(LINUX_VERSION)/kernel_platform/msm-kernel/net/bridge/br_private.h $(PKG_BUILD_DIR)/hyfi-netfilter/
+	$(CP) $(TOPDIR)/src/kernel-$(LINUX_VERSION)/kernel_platform/msm-kernel/net/bridge/br_private.h $(PKG_BUILD_DIR)/hyfi-multicast/
 	$(MAKE) -C $(LINUX_DIR) M=$(PKG_BUILD_DIR) $(strip $(QCAHYFI_BRIDGE_MAKE_OPTS)) \
 		KBUILD_EXTRA_SYMBOLS="${STAGING_DIR}/usr/include/emesh-sp/Module.symvers"
 else
@@ -115,7 +117,7 @@ endef
 define KernelPackage/qca-hyfi-bridge/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/hyfi-bridging.init $(1)/etc/init.d/hyfi-bridging
-ifeq ($(CONFIG_TARGET_sdx75_cpe),y)
+ifeq ($(CONFIG_TARGET_sdx75_cpe)$(CONFIG_TARGET_sdx85_cpe),y)
 	$(INSTALL_DIR) $(1)/$(EXTRA_ADDR)/
 	$(INSTALL_DIR) $(TOPDIR)/bin/targets/$(TARGET_VARIANT)/modules
 	$(INSTALL_BIN) ./files/easymesh_kernel.init $(1)/etc/init.d/easymesh_kernel
